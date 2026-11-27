@@ -149,7 +149,7 @@ zeros become deep wells. Zeros are the points where the surface touches the floo
 cyan critical line.
 
 **Display styles.** The same landscape in the four styles that `X` cycles through
-(`--style full|phase|modulus|lines`), with the colour bar on (`B`):
+(`--style full|phase|modulus|lines`):
 
 | Colour + brightness (default) | Colour only (arg ζ) |
 |---|---|
