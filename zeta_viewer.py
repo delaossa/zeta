@@ -755,8 +755,8 @@ class App:
     def reset_region(self):
         self.center = np.array([0.5, 0.0])     # t symmetric around 0 (zeros come in conjugate pairs)
         self.hy = 26.0                          # shows the first three zero pairs, t = ±14.13, ±21.02, ±25.01
-        self.stretch = 1.0      # 1:1 -- sigma and t on the same scale
-        self.aspect_mode = 0    # A cycles: 0 1:1, 1 sigma squeezed, 2 t stretched
+        self.stretch = 0.4      # default: sigma axis squeezed 2.5x (1.0 would be 1:1)
+        self.aspect_mode = 1    # A cycles: 0 1:1, 1 sigma squeezed, 2 t stretched
         self.region_changed()
 
     def reset_spiral(self):

@@ -68,8 +68,8 @@ Press **?** in the window to show these keys (F1 also works).
 | `S` / `R` / `Esc` | screenshot (saved in `screenshots/`) / reset / quit |
 
 **Plane and landscape:** the arrow keys and `[` `]` move and zoom the region. `N` / `P` jump to
-the next or previous zero on the critical line. `A` cycles the aspect ratio: 1:1 (the default) → σ squeezed 2.5×
-(same t range, more of σ) → t stretched 2.5× (same σ range, more of t) → back to 1:1. `C` toggles contour lines and `G` the grid.
+the next or previous zero on the critical line. `A` cycles the aspect ratio: σ squeezed 2.5× (the default)
+→ t stretched 2.5× (same σ range, more of t) → 1:1 → back to σ squeezed. `C` toggles contour lines and `G` the grid.
 In the landscape, `H` switches the height between |ζ| and log|ζ|, and `-` / `=` scale it.
 
 **Critical line:**
@@ -135,8 +135,8 @@ interpolation.
 * Zeros are drawn as small dark markers, a few pixels wide at any zoom. `Z` hides them; the zeros
   are still visible as the points where all colours meet and the brightness bands crowd together.
   Very large values fade towards white.
-* The default 1:1 aspect ratio shows that ζ is *conformal*: away from zeros and the pole, the phase
-  lines and the |ζ| contours always cross at right angles.
+* At the 1:1 aspect ratio (press `A` twice from the default) you can see that ζ is *conformal*: away
+  from zeros and the pole, the phase lines and the |ζ| contours always cross at right angles.
 * `B` shows a colour bar that labels these encodings. `X` removes the colours entirely and shows only
   the dark phase lines, grey |ζ| contours and a finer grid.
 * Far to the right ζ ≈ 1, so the plane goes flat and uniform. Far to the left |ζ| grows
