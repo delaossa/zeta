@@ -729,7 +729,13 @@ class App {
                 if (this.aspectMode === 1) this.stretch = 0.4;
                 else if (this.aspectMode === 2) this.hy *= 2.5;
                 else { this.hy /= 2.5; this.stretch = 1.0; }
-                this.say(["aspect 1:1", "σ axis squeezed 2.5× (same t range)", "t range stretched 2.5× (same σ range)"][this.aspectMode]);
+                if (this.mode === 0)
+                    this.say(["aspect 1:1", "σ axis squeezed 2.5× (same t range)", "t range stretched 2.5× (same σ range)"][this.aspectMode]);
+                else {      // the landscape always draws sigma and t to the same scale: only the ranges change
+                    const hf = this.half();
+                    this.say(`σ ∈ [${fmtNum(this.center[0] - hf[0])}, ${fmtNum(this.center[0] + hf[0])}]   ` +
+                             `t ∈ [${fmtNum(this.center[1] - hf[1])}, ${fmtNum(this.center[1] + hf[1])}]`);
+                }
                 this.regionChanged();          // the camera stays where it is
                 break;
             case "h": this.hmode ^= 1; break;
@@ -1169,7 +1175,8 @@ class App {
             spec = [
                 ["arrows [ ]", "move / zoom the region (shift: faster)"],
                 ["N / P", "next / previous zero on the critical line"],
-                ["A", "aspect: 1:1 → σ squeezed 2.5× → t stretched 2.5× → 1:1"],
+                ["A", this.mode === 0 ? "aspect: 1:1 → σ squeezed 2.5× → t stretched 2.5× → 1:1"
+                                      : "ranges: wider σ → wider σ and longer t → narrower σ"],
                 ["C / G", "contour lines / grid"],
             ];
             if (this.mode === 1) spec.push(["H", "height: |ζ|  <->  log|ζ|"], ["- =", "height scale"], ["shift-wheel", "zoom the region"]);

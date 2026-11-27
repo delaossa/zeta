@@ -71,7 +71,8 @@ Press **?** in the window to show these keys (F1 also works).
 
 **Plane and landscape:** the arrow keys and `[` `]` move and zoom the region. `N` / `P` jump to
 the next or previous zero on the critical line. `A` cycles the aspect ratio: σ squeezed 2.5× (the default)
-→ t stretched 2.5× (same σ range, more of t) → 1:1 → back to σ squeezed. `C` toggles contour lines and `G` the grid.
+→ t stretched 2.5× (same σ range, more of t) → 1:1 → back to σ squeezed. The landscape always draws σ
+and t to the same scale, so there `A` changes only the ranges shown: wider σ → also longer t → narrower σ. `C` toggles contour lines and `G` the grid.
 In the landscape, `H` switches the height between |ζ| and log|ζ|, and `-` / `=` scale it.
 
 **Critical line:**

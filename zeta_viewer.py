@@ -1008,8 +1008,13 @@ class App:
             else:
                 self.hy /= 2.5
                 self.stretch = 1.0
-            self.say(["aspect 1:1", "σ axis squeezed 2.5× (same t range)",
-                      "t range stretched 2.5× (same σ range)"][self.aspect_mode])
+            if self.mode == 0:
+                self.say(["aspect 1:1", "σ axis squeezed 2.5× (same t range)",
+                          "t range stretched 2.5× (same σ range)"][self.aspect_mode])
+            else:       # the landscape always draws sigma and t to the same scale: only the ranges change
+                hf = self.half()
+                self.say(f"σ ∈ [{fmt_num(self.center[0] - hf[0])}, {fmt_num(self.center[0] + hf[0])}]   "
+                         f"t ∈ [{fmt_num(self.center[1] - hf[1])}, {fmt_num(self.center[1] + hf[1])}]")
             self.region_changed()                   # the camera stays where it is
         elif key == K.KEY_H:
             self.hmode ^= 1
@@ -1492,7 +1497,8 @@ class App:
             spec = [
                 ("arrows [ ]", "move / zoom the region (shift: faster)"),
                 ("N / P", "next / previous zero on the critical line"),
-                ("A", "aspect: 1:1 → σ squeezed 2.5× → t stretched 2.5× → 1:1"),
+                ("A", "aspect: 1:1 → σ squeezed 2.5× → t stretched 2.5× → 1:1" if self.mode == 0
+                      else "ranges: wider σ → wider σ and longer t → narrower σ"),
                 ("C / G", "contour lines / grid"),
             ]
             if self.mode == 1:
