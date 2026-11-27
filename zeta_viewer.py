@@ -1010,9 +1010,7 @@ class App:
                 self.stretch = 1.0
             self.say(["aspect 1:1", "σ axis squeezed 2.5× (same t range)",
                       "t range stretched 2.5× (same σ range)"][self.aspect_mode])
-            self.region_changed()
-            if self.mode == 1:
-                self.fit_land_camera()
+            self.region_changed()                   # the camera stays where it is
         elif key == K.KEY_H:
             self.hmode ^= 1
         elif key == K.KEY_EQUAL:
@@ -1024,9 +1022,7 @@ class App:
             if t is None:
                 self.say("install mpmath to jump between zeros")
                 return
-            spacing = TAU / math.log(max(abs(t), 30.0) / TAU)
-            self.center = np.array([0.5, t])
-            self.hy = min(self.hy, 2.5 * spacing)
+            self.center = np.array([0.5, t])        # keep the current zoom
             self.region_changed()
             self.say(f"zero at s = 1/2 + {t:.10g} i")
         elif key in (K.KEY_LEFT_BRACKET, K.KEY_RIGHT_BRACKET):

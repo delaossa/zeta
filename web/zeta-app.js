@@ -730,8 +730,7 @@ class App {
                 else if (this.aspectMode === 2) this.hy *= 2.5;
                 else { this.hy /= 2.5; this.stretch = 1.0; }
                 this.say(["aspect 1:1", "σ axis squeezed 2.5× (same t range)", "t range stretched 2.5× (same σ range)"][this.aspectMode]);
-                this.regionChanged();
-                if (this.mode === 1) this.fitLandCamera();
+                this.regionChanged();          // the camera stays where it is
                 break;
             case "h": this.hmode ^= 1; break;
             case "=": case "+": this.hscale *= 1.2; break;
@@ -740,9 +739,7 @@ class App {
                 this.say("searching …");
                 const t = findZero(this.center[1], k === "n" ? 1 : -1);
                 if (t === null) { this.say("no zero found"); break; }
-                const spacing = TAU / Math.log(Math.max(Math.abs(t), 30) / TAU);
-                this.center = [0.5, t];
-                this.hy = Math.min(this.hy, 2.5 * spacing);
+                this.center = [0.5, t];        // keep the current zoom
                 this.regionChanged();
                 this.say(`zero at s = 1/2 + ${fmtG(t, 10)} i`);
                 break;
