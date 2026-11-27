@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ζ explorer: GPU accuracy test</title>
+<style>
+  body { background: #0b0b14; color: #dde4ff; font: 13px/1.4 Menlo, Consolas, monospace; padding: 1em 2em; }
+  .pass { color: #7f7; } .fail { color: #f77; }
+</style>
+</head>
+<body>
+<h3>WebGL2 ζ vs mpmath (reference values from make_test_ref.py)</h3>
+<pre id="out">running …</pre>
+<script src="zeta-core.js"></script>
+<script src="test-ref.js"></script>
+<script>
+"use strict";
+// minimal stand-in for zeta-app.js's Program class
+class Program {
+    constructor(gl, vs, fs) {
+        this.gl = gl;
+        const sh = (type, src) => {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+            return s;
+        };
+        const p = this.p = gl.createProgram();
+        gl.attachShader(p, sh(gl.VERTEX_SHADER, vs));
+        gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+        gl.linkProgram(p);
+        this.u = {};
+        for (let i = 0; i < gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); i++) {
+            const info = gl.getActiveUniform(p, i);
+            this.u[info.name] = {loc: gl.getUniformLocation(p, info.name), type: info.type};
+        }
+    }
+    set(vals) {
+        const gl = this.gl;
+        gl.useProgram(this.p);
+        for (const k in vals) {
+            const u = this.u[k];
+            if (!u) continue;
+            const v = vals[k];
+            if (u.type === gl.FLOAT) gl.uniform1f(u.loc, v);
+            else if (u.type === gl.FLOAT_VEC2) gl.uniform2fv(u.loc, v);
+            else gl.uniform1i(u.loc, v);
+        }
+    }
+}
+
+const lines = [];
+const log = (s, cls) => lines.push(cls ? `<span class="${cls}">${s}</span>` : s);
+try {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl || !gl.getExtension("EXT_color_buffer_float")) throw new Error("no WebGL2 float render targets");
+    log("renderer: " + (gl.getExtension("WEBGL_debug_renderer_info")
+        ? gl.getParameter(gl.getExtension("WEBGL_debug_renderer_info").UNMASKED_RENDERER_WEBGL) : "?"));
+    const vao = gl.createVertexArray();
+    const target = (w, h) => {
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA32F, w, h);
+        const fbo = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+        return fbo;
+    };
+    const draw = (prog, fbo, w, h) => {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+        gl.viewport(0, 0, w, h);
+        gl.bindVertexArray(vao);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        const d = new Float32Array(w * h * 4);
+        gl.readPixels(0, 0, w, h, gl.RGBA, gl.FLOAT, d);
+        return d;
+    };
+    const table = new PhaseTable(gl, 1);
+    const N = TEST_REF.N;
+    const prog = new Program(gl, FULLSCREEN_VS, COMPUTE_FS);
+    const fbo = target(N, N);
+    let ok = true;
+    const median = (a) => { const b = [...a].sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
+    for (const {case: [sc, sh, tc, th, method], ref} of TEST_REF.cases) {
+        const rsT = {em: 1e30, rs: 50.0, auto: RS_THRESHOLD}[method];
+        table.tref = null;
+        table.update(tc, th, termsNeeded(Math.abs(sc) + sh, Math.abs(tc) + th, rsT));
+        table.bind(prog, rsT);
+        prog.set({u_sig: [sc, sh], u_tt: [table.rel(tc), th], u_flip: table.flip, u_off: [0, 0], u_den: [N, N]});
+        const d = draw(prog, fbo, N, N);
+        const em = [], ep = [];
+        for (let k = 0; k < N * N; k++) {
+            em.push(Math.abs(d[4 * k] - ref[k][0]));
+            const a = Math.atan2(d[4 * k + 2], d[4 * k + 1]);
+            ep.push(Math.abs(((a - ref[k][1] + Math.PI) % TAU + TAU) % TAU - Math.PI));
+        }
+        const bad = em.filter((e, k) => e > 1e-2 || ep[k] > 1e-2).length / em.length;
+        const pass = bad < 0.02;
+        if (method !== "rs" || tc >= RS_THRESHOLD) ok = ok && pass;
+        log(`${method.padEnd(4)} σ=${sc.toFixed(1).padStart(6)}±${String(sh).padEnd(4)} t=${String(tc).padEnd(8)}±${String(th).padEnd(4)}` +
+            `  log|ζ| err med ${median(em).toExponential(1)} max ${Math.max(...em).toExponential(1)}` +
+            `   arg err med ${median(ep).toExponential(1)} max ${Math.max(...ep).toExponential(1)}   >1e-2: ${(bad * 100).toFixed(0)}%`,
+            pass ? "" : "fail");
+    }
+    // critical-line sampler: Hardy Z(t) = Re(e^{i theta} zeta)
+    const lprog = new Program(gl, FULLSCREEN_VS, LINE_FS);
+    const lfbo = target(4096, 1);
+    for (const {t0, w, n, Z} of TEST_REF.lines) {
+        table.tref = null;
+        table.update(t0 + w / 2, w / 2, termsNeeded(1, Math.abs(t0) + w, RS_THRESHOLD));
+        table.bind(lprog, RS_THRESHOLD);
+        lprog.set({u_dlo: table.rel(t0), u_w: w, u_sigma: 0.5, u_n: n, u_flip: table.flip});
+        const d = draw(lprog, lfbo, 4096, 1);
+        const e = [];
+        for (let k = 0; k < n; k++) e.push(Math.abs(d[4 * k] * Math.cos(d[4 * k + 2]) - d[4 * k + 1] * Math.sin(d[4 * k + 2]) - Z[k]));
+        const pass = median(e) < 1e-2;
+        ok = ok && pass;
+        log(`Z(t) on [${t0}, ${t0 + w}]:  abs err med ${median(e).toExponential(1)} max ${Math.max(...e).toExponential(1)}`,
+            pass ? "" : "fail");
+    }
+    // CPU Hardy Z (zero finder) against mpmath
+    let zmax = 0;
+    for (const {t0, w, n, Z} of TEST_REF.lines)
+        for (let k = 0; k < n; k += 7) zmax = Math.max(zmax, Math.abs(hardyZ(t0 + k / (n - 1) * w) - Z[k]));
+    const zpass = zmax < 1e-4;
+    ok = ok && zpass;
+    log(`CPU hardyZ: max abs err ${zmax.toExponential(1)}`, zpass ? "" : "fail");
+    log(ok ? "PASS" : "FAIL", ok ? "pass" : "fail");
+    document.title = ok ? "PASS" : "FAIL";
+} catch (e) {
+    log("ERROR: " + e.message, "fail");
+    document.title = "ERROR";
+}
+document.getElementById("out").innerHTML = lines.join("\n");
+</script>
+</body>
+</html>

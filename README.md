@@ -248,6 +248,7 @@ comparably accurate, so that is where the automatic switch happens (`RS_THRESHOL
 | `zeta_viewer.py` | the application: windows, views, shaders for drawing, text, controls |
 | `zeta_core.py` | GLSL implementation of ζ (Euler–Maclaurin, Riemann–Siegel, log Γ, θ) and the CPU phase table |
 | `test_zeta_gpu.py` | runs the GPU code offscreen and compares it with mpmath |
+| `web/` | browser version (WebGL2): the same views and controls, no install; see [web/README.md](web/README.md) |
 | `docs/` | screenshots used above |
 
 ## References

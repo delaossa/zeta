@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ζ explorer: the Riemann zeta function on the GPU</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05050c; overflow: hidden; }
+  body { font: 13px/1.3 Menlo, "SF Mono", Consolas, "DejaVu Sans Mono", monospace; color: #dde4ff; }
+  #gl, #ov { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  #ov { touch-action: none; cursor: grab; }
+  #ov:active { cursor: grabbing; }
+  #bar { position: fixed; left: 8px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px; max-width: calc(100% - 16px);
+         align-items: center; }
+  #bar button { font: inherit; font-size: 12px; color: #dde4ff; background: rgba(10, 12, 30, 0.72);
+                border: 1px solid rgba(120, 150, 255, 0.35); border-radius: 5px; padding: 4px 8px; cursor: pointer; }
+  #bar button:hover { background: rgba(40, 50, 110, 0.85); }
+  #bar button.on { background: rgba(60, 110, 200, 0.75); border-color: rgba(150, 200, 255, 0.8); color: #fff; }
+  #bar .sep { width: 6px; }
+  #bar.hidden button:not(#toggle) { display: none; }
+  #err { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 2em;
+         text-align: center; font-size: 15px; color: #ffd0a0; }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="ov"></canvas>
+<div id="bar">
+  <button id="toggle" title="show / hide the toolbar">☰</button>
+  <button data-k="1" data-mode="0" title="complex plane (1)">Plane</button>
+  <button data-k="2" data-mode="1" title="landscape (2)">Landscape</button>
+  <button data-k="3" data-mode="2" title="critical line (3)">Critical line</button>
+  <span class="sep"></span>
+  <button data-k="x" title="display style (X)">Style</button>
+  <button data-k="k" title="colour map (K)">Colours</button>
+  <button data-k="b" data-flag="colorbar" title="colour bar / legend (B)">Legend</button>
+  <button data-k="z" data-flag="markers" title="zero markers (Z)">Zeros</button>
+  <button data-k="l" data-flag="labels" title="axis labels (L)">Labels</button>
+  <button data-k="i" data-flag="info" title="info panel (I)">Info</button>
+  <button data-k=" " data-flag="animate" title="animate (space)">Animate</button>
+  <span class="sep"></span>
+  <button data-k="r" title="reset view (R)">Reset</button>
+  <button data-k="s" title="save a screenshot (S)">Save</button>
+  <button data-k="?" data-flag="help" title="help (? or F1)">Help</button>
+</div>
+<div id="err"></div>
+<script src="zeta-core.js"></script>
+<script src="zeta-shaders.js"></script>
+<script src="zeta-app.js"></script>
+<script>
+"use strict";
+(function () {
+    let app;
+    try {
+        app = new App(document.getElementById("gl"), document.getElementById("ov"));
+    } catch (e) {
+        const el = document.getElementById("err");
+        el.style.display = "flex";
+        el.textContent = "Sorry, the ζ explorer cannot run here: " + e.message;
+        document.getElementById("bar").style.display = "none";
+        console.error(e);
+        return;
+    }
+    window.zetaApp = app;
+    const q = new URLSearchParams(location.search);
+    app.applyParams(q);
+    const bar = document.getElementById("bar");
+    if (q.has("nobar")) bar.style.display = "none";
+    const sync = () => {
+        for (const b of bar.querySelectorAll("button[data-mode]")) b.classList.toggle("on", Number(b.dataset.mode) === app.mode);
+        for (const b of bar.querySelectorAll("button[data-flag]")) b.classList.toggle("on", !!app[b.dataset.flag]);
+    };
+    app.onChange = sync;
+    for (const b of bar.querySelectorAll("button[data-k]")) {
+        b.addEventListener("click", (e) => { app.onKey(b.dataset.k, e.shiftKey); b.blur(); });
+    }
+    document.getElementById("toggle").addEventListener("click", (e) => { bar.classList.toggle("hidden"); e.target.blur(); });
+    sync();
+    if (!app.info && !q.has("nobar")) app.say("press ? or F1 for help");
+    app.run(q.has("timer"));
+})();
+</script>
+</body>
+</html>
