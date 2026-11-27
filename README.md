@@ -148,15 +148,6 @@ pole and the left half-plane don't dominate. With `H` the height becomes log|ζ|
 zeros become deep wells. Zeros are the points where the surface touches the floor, all along the
 cyan critical line.
 
-**Display styles.** The same landscape in the four styles that `X` cycles through
-(`--style full|phase|modulus|lines`):
-
-| Colour + brightness (default) | Colour only (arg ζ) |
-|---|---|
-| ![full](docs/zeta_landscape_full.png) | ![phase](docs/zeta_landscape_phase.png) |
-| **Brightness only (\|ζ\|)** | **Lines only** |
-| ![modulus](docs/zeta_landscape_modulus.png) | ![lines](docs/zeta_landscape_lines.png) |
-
 ### How ζ is computed (in float32, on the GPU)
 
 Each pixel or vertex runs a fragment shader in [zeta_core.py](zeta_core.py). GPUs work in 32-bit
