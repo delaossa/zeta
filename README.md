@@ -28,7 +28,7 @@ Useful command-line options:
 # other options: --scheme twilight, --animate, --camera 1 (end-on), --sigma 0.7,
 #                --labels, --info (both off by default; toggle with L / I),
 #                --style full|phase|modulus|lines, --colorbar, --no-markers (X / B / Z)
-# render one frame to a PNG and exit
+# render one frame to a PNG and exit (--view YAW PITCH ZOOM sets the landscape camera)
 .venv/bin/python zeta_viewer.py --mode 2 --shot out.png
 ```
 
@@ -147,6 +147,15 @@ interpolation.
 pole and the left half-plane don't dominate. With `H` the height becomes log|ζ| instead, where
 zeros become deep wells. Zeros are the points where the surface touches the floor, all along the
 cyan critical line.
+
+**Display styles.** The same landscape in the four styles that `X` cycles through
+(`--style full|phase|modulus|lines`), with the colour bar on (`B`):
+
+| Colour + brightness (default) | Colour only (arg ζ) |
+|---|---|
+| ![full](docs/style_full.png) | ![phase](docs/style_phase.png) |
+| **Brightness only (\|ζ\|)** | **Lines only** |
+| ![modulus](docs/style_modulus.png) | ![lines](docs/style_lines.png) |
 
 ### How ζ is computed (in float32, on the GPU)
 

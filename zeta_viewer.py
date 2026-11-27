@@ -781,7 +781,8 @@ class App:
         dist = 0.88 * r / math.sin(min(half_v, half_h))
         # seen from the sigma > 0 side, slightly from below the t range: t runs left -> right across the
         # screen, the left half-plane rises behind the critical line
-        self.cam_land.init = (1.0, 0.6, dist, (0.0, top / 2, 0.0))
+        yaw, pitch, zoom = getattr(self, "land_view", None) or (1.0, 0.6, 1.0)
+        self.cam_land.init = (yaw, pitch, dist / zoom, (0.0, top / 2, 0.0))
         self.cam_land.reset()
 
     def region_changed(self):
@@ -1598,6 +1599,8 @@ def main():
     ap.add_argument("--colorbar", action="store_true", help="start with the colour bar shown (toggle: B)")
     ap.add_argument("--no-markers", action="store_true", help="hide the zero markers (toggle: Z)")
     ap.add_argument("--help-panel", action="store_true", help="start with the help panel open")
+    ap.add_argument("--view", type=float, nargs=3, metavar=("YAW", "PITCH", "ZOOM"),
+                    help="landscape camera: yaw and pitch in radians (default 1.0 0.6), zoom factor (default 1)")
     ap.add_argument("--shot", metavar="PNG", help="render, save a screenshot and exit")
     a = ap.parse_args()
     w, h = map(int, a.size.lower().split("x"))
@@ -1622,7 +1625,10 @@ def main():
     app.labels, app.info = int(a.labels), int(a.info)
     app.colorbar, app.markers = int(a.colorbar), int(not a.no_markers)
     app.style = 3 if a.no_color else ["full", "phase", "modulus", "lines"].index(a.style)
-    if not app.info:
+    if a.view:
+        app.land_view = tuple(a.view)
+        app.fit_land_camera()
+    if not app.info and not a.shot:
         app.say("press ? or F1 for help")
     app.region_changed()
     app.spiral_changed()
