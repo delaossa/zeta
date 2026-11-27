@@ -4,8 +4,6 @@ An interactive 3D viewer for the Riemann zeta function ζ(s). Every value is com
 (OpenGL 4.1 shaders, driven from Python), from the trivial zeros near the origin up to heights of
 t ≈ 10¹⁰ on the critical line.
 
-![ζ landscape: |ζ(s)| as height, arg ζ(s) as colour, with the critical line and zeros](docs/landscape.png)
-
 ![demo: rotating and zooming the landscape](docs/demo.gif)
 
 ---
@@ -26,9 +24,6 @@ Useful command-line options:
 ```bash
 # start in the complex-plane view, centred at s = 1/2 + 10^6 i
 .venv/bin/python zeta_viewer.py --mode 1 --center 0.5 1e6 --height 3
-
-# the critical-line trace for 10^6 <= t <= 10^6 + 20, already unwound into Hardy's Z(t)
-.venv/bin/python zeta_viewer.py --mode 3 --t 1e6 1.00002e6 --unwind
 
 # other options: --scheme twilight, --animate, --camera 1 (end-on), --sigma 0.7,
 #                --labels, --info (both off by default; toggle with L / I),
