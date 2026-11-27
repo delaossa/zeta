@@ -10,14 +10,25 @@
   #gl, #ov { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
   #ov { touch-action: none; cursor: grab; }
   #ov:active { cursor: grabbing; }
-  #bar { position: fixed; left: 8px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px; max-width: calc(100% - 16px);
-         align-items: center; }
-  #bar button { font: inherit; font-size: 12px; color: #dde4ff; background: rgba(10, 12, 30, 0.72);
-                border: 1px solid rgba(120, 150, 255, 0.35); border-radius: 5px; padding: 4px 8px; cursor: pointer; }
-  #bar button:hover { background: rgba(40, 50, 110, 0.85); }
-  #bar button.on { background: rgba(60, 110, 200, 0.75); border-color: rgba(150, 200, 255, 0.8); color: #fff; }
+  #bar { position: fixed; left: 8px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px;
+         max-width: calc(100% - 196px); align-items: center; }
+  #nav { position: fixed; right: 8px; bottom: 8px; display: grid; grid-template-columns: repeat(3, 56px); gap: 4px; }
+  .tb button { font: inherit; font-size: 12px; color: #dde4ff; background: rgba(10, 12, 30, 0.72);
+               border: 1px solid rgba(120, 150, 255, 0.35); border-radius: 5px; padding: 4px 8px; cursor: pointer;
+               touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  #nav button { font-size: 15px; padding: 7px 0; }
+  #nav button.small { font-size: 11px; }
+  .tb button:hover { background: rgba(40, 50, 110, 0.85); }
+  .tb button:active { background: rgba(60, 110, 200, 0.85); }
+  .tb button.on { background: rgba(60, 110, 200, 0.75); border-color: rgba(150, 200, 255, 0.8); color: #fff; }
+  #nav button.off { visibility: hidden; }
   #bar .sep { width: 6px; }
-  #bar.hidden button:not(#toggle) { display: none; }
+  body.hidebar #bar button:not(#toggle), body.hidebar #nav { display: none; }
+  body.hidebar #bar { max-width: none; }
+  @media (max-width: 640px) {            /* phones: toolbar full width, navigation pad stacked above it */
+    #bar { max-width: calc(100% - 16px); }
+    #nav { grid-template-columns: repeat(3, 52px); }
+  }
   #err { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 2em;
          text-align: center; font-size: 15px; color: #ffd0a0; }
 </style>
@@ -25,7 +36,7 @@
 <body>
 <canvas id="gl"></canvas>
 <canvas id="ov"></canvas>
-<div id="bar">
+<div id="bar" class="tb">
   <button id="toggle" title="show / hide the toolbar">☰</button>
   <button data-k="1" data-mode="0" title="complex plane (1)">Plane</button>
   <button data-k="2" data-mode="1" title="landscape (2)">Landscape</button>
@@ -43,6 +54,17 @@
   <button data-k="s" title="save a screenshot (S)">Save</button>
   <button data-k="?" data-flag="help" title="help (? or F1)">Help</button>
 </div>
+<div id="nav" class="tb">
+  <button data-k="[" data-repeat title="zoom out: wider range ([)">－</button>
+  <button data-k="ArrowUp" data-repeat title="move up in t (↑) · critical line: increase σ">▲</button>
+  <button data-k="]" data-repeat title="zoom in: narrower range (])">＋</button>
+  <button data-k="ArrowLeft" data-repeat title="move left (←) · critical line: earlier t">◀</button>
+  <button data-k="ArrowDown" data-repeat title="move down in t (↓) · critical line: decrease σ">▼</button>
+  <button data-k="ArrowRight" data-repeat title="move right (→) · critical line: later t">▶</button>
+  <button data-k="p" data-region class="small" title="previous zero on the critical line (P)">‹ zero</button>
+  <button data-k="a" data-region class="small" title="aspect: σ squeezed → t stretched → 1:1 (A)">Aspect</button>
+  <button data-k="n" data-region class="small" title="next zero on the critical line (N)">zero ›</button>
+</div>
 <div id="err"></div>
 <script src="zeta-core.js"></script>
 <script src="zeta-shaders.js"></script>
@@ -58,23 +80,49 @@
         el.style.display = "flex";
         el.textContent = "Sorry, the ζ explorer cannot run here: " + e.message;
         document.getElementById("bar").style.display = "none";
+        document.getElementById("nav").style.display = "none";
         console.error(e);
         return;
     }
     window.zetaApp = app;
     const q = new URLSearchParams(location.search);
     app.applyParams(q);
-    const bar = document.getElementById("bar");
-    if (q.has("nobar")) bar.style.display = "none";
+    const bar = document.getElementById("bar"), nav = document.getElementById("nav");
+    if (q.has("nobar")) bar.style.display = nav.style.display = "none";
     const sync = () => {
         for (const b of bar.querySelectorAll("button[data-mode]")) b.classList.toggle("on", Number(b.dataset.mode) === app.mode);
         for (const b of bar.querySelectorAll("button[data-flag]")) b.classList.toggle("on", !!app[b.dataset.flag]);
+        for (const b of nav.querySelectorAll("button[data-region]")) b.classList.toggle("off", app.mode === 2);
     };
     app.onChange = sync;
     for (const b of bar.querySelectorAll("button[data-k]")) {
         b.addEventListener("click", (e) => { app.onKey(b.dataset.k, e.shiftKey); b.blur(); });
     }
-    document.getElementById("toggle").addEventListener("click", (e) => { bar.classList.toggle("hidden"); e.target.blur(); });
+    // navigation pad: fires on press; arrows and zoom repeat while held
+    for (const b of nav.querySelectorAll("button[data-k]")) {
+        let timer = null;
+        const stop = () => { clearTimeout(timer); clearInterval(timer); timer = null; };
+        b.addEventListener("pointerdown", (e) => {
+            e.preventDefault();
+            stop();
+            app.onKey(b.dataset.k, e.shiftKey);
+            if (b.dataset.repeat !== undefined)
+                timer = setTimeout(() => { timer = setInterval(() => app.onKey(b.dataset.k, false), 90); }, 400);
+        });
+        for (const ev of ["pointerup", "pointerleave", "pointercancel"]) b.addEventListener(ev, stop);
+        b.addEventListener("contextmenu", (e) => e.preventDefault());
+    }
+    const layout = () => {      // on narrow screens put the pad just above the (wrapped) toolbar
+        const narrow = window.matchMedia("(max-width: 640px)").matches;
+        nav.style.bottom = narrow ? (bar.offsetHeight + 14) + "px" : "";
+    };
+    window.addEventListener("resize", layout);
+    layout();
+    document.getElementById("toggle").addEventListener("click", (e) => {
+        document.body.classList.toggle("hidebar");
+        e.target.blur();
+        layout();
+    });
     sync();
     if (!app.info && !q.has("nobar")) app.say("press ? or F1 for help");
     app.run(q.has("timer"));

@@ -3,7 +3,9 @@
 A WebGL2 port of the desktop viewer. ζ is computed on the GPU with the same shaders (Euler–Maclaurin,
 Riemann–Siegel, the CPU phase table), so the pictures and the accuracy match the Python version. It has
 the same three views, display styles, colour maps, legend, labels and keyboard controls, plus mouse,
-touch (drag, pinch) and a small toolbar.
+touch (drag, pinch), a toolbar and a navigation pad (bottom right) for moving and zooming the
+region, cycling the aspect ratio and jumping between zeros without a keyboard. The pad's arrows and
+zoom buttons repeat while held.
 
 ## Running it
 
