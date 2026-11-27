@@ -702,7 +702,7 @@ class App:
         self.scheme = SCHEME_NAMES.index(DEFAULT_SCHEME)
         self.method = 0
         self.hmode = 0
-        self.hscale = 0.12
+        self.hscale = 0.06
         self.input = None
         self.message, self.message_t = "", 0.0
         self.cam_land = OrbitCam(0.0, 0.62, 3.6, (0, 0.25, 0))

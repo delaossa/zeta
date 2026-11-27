@@ -370,7 +370,7 @@ class App {
         this.scheme = SCHEME_NAMES.indexOf(DEFAULT_SCHEME);
         this.method = 0;
         this.hmode = 0;
-        this.hscale = 0.12;
+        this.hscale = 0.06;
         this.landView = null;
         this.message = "";
         this.messageT = 0;
