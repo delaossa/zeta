@@ -6,6 +6,8 @@ t ≈ 10¹⁰ on the critical line.
 
 ![ζ landscape: |ζ(s)| as height, arg ζ(s) as colour, with the critical line and zeros](docs/landscape.png)
 
+![demo: rotating and zooming the landscape](docs/demo.gif)
+
 ---
 
 ## Running it

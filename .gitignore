@@ -9,3 +9,4 @@ screenshots/
 
 # macOS
 .DS_Store
+docs/*.mov
