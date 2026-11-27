@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# local backups and user screenshots (S key)
+.backup/
+screenshots/
+
+# macOS
+.DS_Store
