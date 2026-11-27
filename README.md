@@ -4,11 +4,7 @@ An interactive 3D viewer for the Riemann zeta function ζ(s). Every value is com
 (OpenGL 4.1 shaders, driven from Python), from the trivial zeros near the origin up to heights of
 t ≈ 10¹⁰ on the critical line.
 
-| Complex plane (t ≈ 10⁶) | Landscape |
-|---|---|
-| ![plane](docs/plane_t1e6.png) | ![landscape](docs/landscape.png) |
-| **Critical line ζ(½ + it), 0 ≤ t ≤ 60** | **Hardy's Z(t) near t = 10⁶ (unwound)** |
-| ![critical line](docs/critical_line.png) | ![hardy](docs/hardy_z_t1e6.png) |
+![ζ landscape: |ζ(s)| as height, arg ζ(s) as colour, with the critical line and zeros](docs/landscape.png)
 
 ---
 
