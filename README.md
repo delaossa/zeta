@@ -4,6 +4,8 @@ An interactive 3D viewer for the Riemann zeta function ζ(s). Every value is com
 (OpenGL 4.1 shaders, driven from Python), from the trivial zeros near the origin up to heights of
 t ≈ 10¹⁰ on the critical line.
 
+**[▶ Try it in your browser](https://delaossa.github.io/zeta/)**: no install needed (WebGL2; see [web/](web/README.md)).
+
 ![demo: rotating and zooming the landscape](docs/demo.gif)
 
 ---

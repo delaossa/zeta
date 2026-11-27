@@ -7,7 +7,9 @@ touch (drag, pinch) and a small toolbar.
 
 ## Running it
 
-No build step and no server needed: open `web/index.html` in a recent browser (Chrome, Edge, Firefox,
+Live version: **https://delaossa.github.io/zeta/** (published from `main` by `.github/workflows/pages.yml`).
+
+To run a local copy: no build step and no server needed: open `web/index.html` in a recent browser (Chrome, Edge, Firefox,
 Safari 15+). If your browser blocks local files, serve the folder instead:
 
 ```bash
