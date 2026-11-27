@@ -429,8 +429,8 @@ class App {
     resetRegion() {
         this.center = [0.5, 0.0];     // t symmetric around 0 (zeros come in conjugate pairs)
         this.hy = 26.0;               // the first three zero pairs, t = ±14.13, ±21.02, ±25.01
-        this.stretch = 1.0;
-        this.aspectMode = 0;          // A cycles: 0 1:1, 1 sigma squeezed, 2 t stretched
+        this.stretch = 0.4;           // default: sigma axis squeezed 2.5x
+        this.aspectMode = 1;          // A cycles: 0 1:1, 1 sigma squeezed, 2 t stretched
         this.regionChanged();
     }
 
