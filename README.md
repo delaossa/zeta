@@ -153,9 +153,9 @@ cyan critical line.
 
 | Colour + brightness (default) | Colour only (arg ζ) |
 |---|---|
-| ![full](docs/style_full.png) | ![phase](docs/style_phase.png) |
+| ![full](docs/zeta_landscape_full.png) | ![phase](docs/zeta_landscape_phase.png) |
 | **Brightness only (\|ζ\|)** | **Lines only** |
-| ![modulus](docs/style_modulus.png) | ![lines](docs/style_lines.png) |
+| ![modulus](docs/zeta_landscape_modulus.png) | ![lines](docs/zeta_landscape_lines.png) |
 
 ### How ζ is computed (in float32, on the GPU)
 
