@@ -121,9 +121,16 @@ float dtheta0(float d) {
 // Riemann-Siegel theta(t) mod 2pi
 float theta_rel(float d) {
     float T = u_t0 + d;
-    if (abs(T) < 200.0 || u_t0 < 1.0) {
-        float at = abs(T);
+    float at = abs(T);
+    if (at < 200.0) {
         float th = clgamma(vec2(0.25, 0.5 * at)).y - 0.5 * at * 1.1447298858494002;
+        return wrap(T < 0.0 ? -th : th);
+    }
+    if (T < 0.0 || u_t0 < 1.0) {
+        // window crossing t = 0, on the side opposite t_ref: |T| is at most about the window width here,
+        // so the asymptotic formula is fine in plain float (theta is odd: theta(-t) = -theta(t))
+        float th = 0.5 * at * log(at / TAU) - 0.5 * at - 0.39269908169872414
+                 + 1.0 / (48.0 * at) + 7.0 / (5760.0 * at * at * at);
         return wrap(T < 0.0 ? -th : th);
     }
     return wrap(u_theta0 + dtheta0(d) + 1.0 / (48.0 * T) + 7.0 / (5760.0 * T * T * T));

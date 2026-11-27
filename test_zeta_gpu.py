@@ -78,7 +78,7 @@ lprog = ctx.program(vertex_shader=FULLSCREEN_VS, fragment_shader=LINE_FS)
 lvao = ctx.vertex_array(lprog, [])
 ltex = ctx.texture((4096, 1), 4, dtype="f4")
 lfbo = ctx.framebuffer(color_attachments=[ltex])
-for t0, w in [(0.0, 60.0), (5000.0, 10.0), (1e6, 5.0)]:
+for t0, w in [(0.0, 60.0), (-700.0, 1000.0), (5000.0, 10.0), (1e6, 5.0)]:   # 2nd: window crossing t = 0
     n = 200
     table.tref = None
     table.update(t0 + w / 2, w / 2, terms_needed(1.0, abs(t0) + w, RS_THRESHOLD))
