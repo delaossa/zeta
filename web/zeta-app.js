@@ -363,7 +363,7 @@ class App {
         this.grid = 1;
         this.labels = 0;
         this.info = 0;
-        this.style = 0;
+        this.style = 1;               // colour only
         this.colorbar = 0;
         this.markers = 1;
         this.help = false;
@@ -452,9 +452,10 @@ class App {
         const aspect = w / Math.max(h, 1);
         const halfV = Math.PI / 8, halfH = Math.atan(Math.tan(halfV) * aspect);
         const r = Math.sqrt(ar * ar + 1 + (top / 2) ** 2);
-        const dist = 0.88 * r / Math.sin(Math.min(halfV, halfH));
+        const dist = 0.44 * r / Math.sin(Math.min(halfV, halfH));     // half the distance that fits it all in view
         const [yaw, pitch, zoom] = this.landView || [1.0, 0.6, 1.0];
-        this.camLand.init = [yaw, pitch, dist / zoom, [0, top / 2, 0]];
+        const focusX = (-2.0 - this.center[0]) / this.hy;             // look at sigma = -2 (world x = (sigma - centre) / hy)
+        this.camLand.init = [yaw, pitch, dist / zoom, [focusX, top / 2, 0]];
         this.camLand.reset();
     }
 
@@ -685,7 +686,7 @@ class App {
             case " ": this.animate = !this.animate; break;
             case "k":
                 this.scheme = (this.scheme + (shift ? -1 : 1) + SCHEME_NAMES.length) % SCHEME_NAMES.length;
-                if (this.style >= 2) this.style = 0;
+                if (this.style >= 2) this.style = 1;
                 this.say(`colour map ${this.scheme + 1}/${SCHEME_NAMES.length}: ${SCHEME_NAMES[this.scheme]}`);
                 break;
             case "x":

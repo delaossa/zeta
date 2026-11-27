@@ -61,7 +61,7 @@ Press **?** in the window to show these keys (F1 also works).
 | `1` `2` `3`, `Tab` | switch view |
 | `space` | animate (phase flow, auto-rotate, the trace drawing itself) |
 | `K` / `shift-K` | next / previous colour map (14; Aurora is the default): Rainbow, Neon, Twilight, Fire & Ice, Pastel, Monochrome, HSV, Phase, Ocean, Sunset, Aurora, Copper, Earth, Blue-Orange. All are cyclic, since phase wraps around |
-| `X` / `shift-X` | display style: colour + brightness (default) / colour only (arg ζ) / brightness only (\|ζ\|) / lines only (contour lines on a neutral background, finer grid) |
+| `X` / `shift-X` | display style: colour + brightness / colour only (arg ζ, the default) / brightness only (\|ζ\|) / lines only (contour lines on a neutral background, finer grid) |
 | `B` | colour bar / legend (top right): labelled bars for hue (arg ζ) and brightness (\|ζ\|), or a line legend when colours are off |
 | `Z` | zero markers on / off |
 | `L` / `I` | axis labels / info panel (the panel shows ζ(s) under the cursor). Both start off; `--labels` and `--info` turn them on at launch |

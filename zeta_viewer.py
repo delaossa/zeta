@@ -695,7 +695,7 @@ class App:
         self.grid = 1
         self.labels = 0
         self.info = 0
-        self.style = 0          # 0 hue+brightness, 1 hue only, 2 brightness only, 3 lines only
+        self.style = 1          # 0 hue+brightness, 1 hue only, 2 brightness only, 3 lines only
         self.colorbar = 0
         self.markers = 1        # dark marker at each zero
         self.help = False
@@ -778,11 +778,12 @@ class App:
         half_v = math.radians(45) / 2
         half_h = math.atan(math.tan(half_v) * aspect)
         r = math.sqrt(ar * ar + 1.0 + (top / 2) ** 2)       # bounding-sphere radius
-        dist = 0.88 * r / math.sin(min(half_v, half_h))
+        dist = 0.44 * r / math.sin(min(half_v, half_h))       # half the distance that fits it all in view
         # seen from the sigma > 0 side, slightly from below the t range: t runs left -> right across the
         # screen, the left half-plane rises behind the critical line
         yaw, pitch, zoom = getattr(self, "land_view", None) or (1.0, 0.6, 1.0)
-        self.cam_land.init = (yaw, pitch, dist / zoom, (0.0, top / 2, 0.0))
+        focus_x = (-2.0 - self.center[0]) / self.hy           # look at sigma = -2 (world x = (sigma - centre) / hy)
+        self.cam_land.init = (yaw, pitch, dist / zoom, (focus_x, top / 2, 0.0))
         self.cam_land.reset()
 
     def region_changed(self):
@@ -956,7 +957,7 @@ class App:
         elif key == K.KEY_K:
             self.scheme = (self.scheme + (-1 if shift else 1)) % len(SCHEME_NAMES)
             if self.style >= 2:
-                self.style = 0
+                self.style = 1
             self.say(f"colour map {self.scheme + 1}/{len(SCHEME_NAMES)}: {SCHEME_NAMES[self.scheme]}")
         elif key == K.KEY_X:
             self.style = (self.style + (-1 if shift else 1)) % len(STYLES)
@@ -1595,7 +1596,7 @@ def main():
     ap.add_argument("--camera", type=int, default=0, help="view 3 camera preset 0-3")
     ap.add_argument("--labels", action="store_true", help="start with axis labels on (toggle: L)")
     ap.add_argument("--info", action="store_true", help="start with the info panel on (toggle: I)")
-    ap.add_argument("--style", choices=["full", "phase", "modulus", "lines"], default="full",
+    ap.add_argument("--style", choices=["full", "phase", "modulus", "lines"], default="phase",
                     help="full = hue (arg) + brightness (|zeta|), phase = hue only, modulus = brightness only, lines = contour lines only (cycle: X)")
     ap.add_argument("--no-color", action="store_true", help="same as --style lines")
     ap.add_argument("--colorbar", action="store_true", help="start with the colour bar shown (toggle: B)")
