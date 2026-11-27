@@ -267,3 +267,7 @@ comparably accurate, so that is where the automatic switch happens (`RS_THRESHOL
   Covers domain colouring and phase portraits.
 * A. M. Odlyzko and A. Schönhage, "Fast algorithms for multiple evaluations of the Riemann zeta
   function", *Trans. AMS* **309** (1988).
+
+## License
+
+MIT, see [LICENSE](LICENSE).
