@@ -1000,6 +1000,19 @@ class App:
             self.on_key_region(key, shift)
 
     def toggle_fullscreen(self):
+        if sys.platform == "darwin":                    # macOS: native fullscreen, same as the green button
+            try:
+                import ctypes
+                import ctypes.util
+                objc = ctypes.cdll.LoadLibrary(ctypes.util.find_library("objc"))
+                objc.sel_registerName.restype = ctypes.c_void_p
+                objc.sel_registerName.argtypes = [ctypes.c_char_p]
+                objc.objc_msgSend.restype = ctypes.c_void_p
+                objc.objc_msgSend.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p]
+                objc.objc_msgSend(glfw.get_cocoa_window(self.win), objc.sel_registerName(b"toggleFullScreen:"), None)
+                return
+            except Exception as e:                      # fall back to GLFW's monitor fullscreen
+                print("native fullscreen unavailable:", e)
         if glfw.get_window_monitor(self.win):          # back to the window we had before
             x, y, w, h = self.windowed
             glfw.set_window_monitor(self.win, None, x, y, w, h, 0)
