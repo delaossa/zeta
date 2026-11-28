@@ -9,7 +9,7 @@ from the origin to t = 10¹⁰.
 
 ## What you are looking at
 
-The landscape is ζ(s) over a patch of the complex plane, s = σ + it. Height is |ζ(s)|, colour is
+The landscape is ζ(s) over a patch of the complex plane, s = σ + it. Height is its magnitude |ζ(s)|, colour is
 its phase arg ζ(s).
 
 - The **cyan line** is the critical line, σ = ½. Every point where the surface touches the floor
