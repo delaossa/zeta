@@ -950,6 +950,8 @@ class App:
             self.mode = key - K.KEY_1
         elif key == K.KEY_TAB:
             self.mode = (self.mode + (2 if shift else 1)) % 3
+        elif key == K.KEY_F:
+            self.toggle_fullscreen()
         elif key == K.KEY_F1:
             self.help = not self.help
         elif key == K.KEY_SPACE:
@@ -996,6 +998,17 @@ class App:
             self.on_key_spiral(key, shift)
         else:
             self.on_key_region(key, shift)
+
+    def toggle_fullscreen(self):
+        if glfw.get_window_monitor(self.win):          # back to the window we had before
+            x, y, w, h = self.windowed
+            glfw.set_window_monitor(self.win, None, x, y, w, h, 0)
+        else:
+            self.windowed = (*glfw.get_window_pos(self.win), *glfw.get_window_size(self.win))
+            mon = glfw.get_primary_monitor()
+            mode = glfw.get_video_mode(mon)
+            glfw.set_window_monitor(self.win, mon, 0, 0, mode.size.width, mode.size.height, mode.refresh_rate)
+        self.region_changed()
 
     def on_key_region(self, key, shift):
         K = glfw
@@ -1482,6 +1495,7 @@ class App:
             ("T", "go to a value of t (type e.g. 1e6, then Enter)"),
             ("M", "method: auto / Euler–Maclaurin only / Riemann–Siegel only"),
             ("S / R", "screenshot / reset view"),
+            ("F", "fullscreen on / off"),
             ("?  (or F1)", "this help            Esc / Q   quit"),
         ]
         if self.mode == 2:

@@ -25,6 +25,7 @@
   #bar .sep { width: 6px; }
   body.hidebar #bar button:not(#toggle), body.hidebar #nav { display: none; }
   body.hidebar #bar { max-width: none; }
+  body.nocontrols #bar, body.nocontrols #nav { display: none; }
   @media (max-width: 640px) {            /* phones: toolbar full width, navigation pad stacked above it */
     #bar { max-width: calc(100% - 16px); }
     #nav { grid-template-columns: repeat(3, 52px); }
@@ -52,6 +53,7 @@
   <span class="sep"></span>
   <button data-k="r" title="reset view (R)">Reset</button>
   <button data-k="s" title="save a screenshot (S)">Save</button>
+  <button data-k="f" data-flag="fullscreen" title="fullscreen (F)">Fullscreen</button>
   <button data-k="?" data-flag="help" title="help (? or F1)">Help</button>
 </div>
 <div id="nav" class="tb">
@@ -95,6 +97,9 @@
         for (const b of nav.querySelectorAll("button[data-region]")) b.classList.toggle("off", app.mode === 2);
     };
     app.onChange = sync;
+    document.addEventListener("fullscreenchange", sync);
+    document.addEventListener("webkitfullscreenchange", sync);
+    app.onToggleControls = () => !document.body.classList.toggle("nocontrols");   // O key; returns "shown"
     for (const b of bar.querySelectorAll("button[data-k]")) {
         b.addEventListener("click", (e) => { app.onKey(b.dataset.k, e.shiftKey); b.blur(); });
     }

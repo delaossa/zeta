@@ -658,6 +658,18 @@ class App {
         }
     }
 
+    get fullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+
+    toggleFullscreen() {
+        const d = document, el = d.documentElement;
+        if (this.fullscreen) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+        else if (el.requestFullscreen || el.webkitRequestFullscreen) {
+            const r = (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+            if (r && r.catch) r.catch(() => this.say("the browser refused fullscreen"));
+        }
+        else this.say("this browser does not allow fullscreen pages (on iPhone: Share → Add to Home Screen)");
+    }
+
     goto(txt) {
         const v = Number(txt);
         if (txt === null || txt.trim() === "" ) return;
@@ -712,6 +724,13 @@ class App {
                 this.spiralChanged();
                 break;
             case "s": this.wantShot = true; break;
+            case "f": this.toggleFullscreen(); break;
+            case "o":
+                if (this.onToggleControls) {
+                    const shown = this.onToggleControls();
+                    this.say(shown ? "controls shown" : "controls hidden: press O to show them");
+                }
+                break;
             case "r":
                 if (spiral) { this.resetSpiral(); this.camSpiral.reset(); this.camPreset = 0; }
                 else { this.resetRegion(); this.fitLandCamera(); }
@@ -1159,6 +1178,7 @@ class App {
             ["T", "go to a value of t (e.g. 1e6)"],
             ["M", "method: auto / Euler–Maclaurin only / Riemann–Siegel only"],
             ["S / R", "save a screenshot / reset view"],
+            ["F / O", "fullscreen / hide or show the on-screen controls"],
             ["?  (or F1)", "this help            Esc   close"],
         ];
         let spec;

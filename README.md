@@ -31,7 +31,7 @@ its phase arg ζ(s).
 - **T** takes you to any height: try 1e6, or 1e10.
 - **X** changes the style (colour, brightness, lines), **K** cycles through 14 colour maps, and
   **B** shows a legend.
-- **Space** sets everything in motion.
+- **Space** sets everything in motion, and **F** goes fullscreen.
 - On the critical line, **U** unwinds the spiral into Hardy's real function Z(t).
 - **?** lists every key. On a touchscreen, the toolbar and the pad in the corner do the same.
 
