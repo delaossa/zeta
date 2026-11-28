@@ -1,7 +1,6 @@
 # ζ function
 
-The Riemann zeta function, computed live on the GPU. Rotate it, zoom into it, follow its zeros
-from the origin to t = 10¹⁰.
+The Riemann zeta function, computed live on the GPU. Rotate it, zoom into it, follow its zeros.
 
 **[▶ Open it in your browser](https://delaossa.github.io/zeta/)**.
 
